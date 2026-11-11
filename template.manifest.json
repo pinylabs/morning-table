@@ -1,0 +1,15 @@
+{
+  "name": "Morning Table",
+  "line": "A calm, photo-led EmDash site for a neighbourhood caf\u00e9: one picture, a short menu and Book a table.",
+  "kind": "emdash",
+  "category": "business",
+  "stacks": [
+    "astro",
+    "emdash"
+  ],
+  "status": "preview",
+  "demo": null,
+  "preview": null,
+  "licence": "MIT",
+  "basedOn": "EmDash marketing-cloudflare template, 1.4.0 (MIT, Cloudflare)"
+}

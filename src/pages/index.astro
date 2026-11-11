@@ -1,0 +1,233 @@
+---
+// The preview home, from its accepted design. The full template is being built by the Pinies;
+// until then this page is the theme's home and the rest of the site is EmDash's own template.
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning Table — a neighbourhood café</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link is:inline rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..600;1,400..600&family=Karla:wght@400..600&display=swap">
+<style is:global>
+/* The motion every site shares. Only transform and opacity move, so it stays on the compositor at 60 fps. Under
+   prefers-reduced-motion everything is still, and a browser without scroll timelines simply shows the page. */
+
+/* Page changes: the browser's cross-document view transition, as Astro's view transitions give it. A picture that
+   names itself the same on both pages grows into its place; the rest fades and slides. */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: 260ms cubic-bezier(.4, 0, 1, 1) both vt-out; }
+::view-transition-new(root) { animation: 420ms cubic-bezier(0, 0, .2, 1) 80ms both vt-in; }
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-12px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(24px); } }
+
+/* The hero's first moment: its words rise one line after another. */
+.rise { animation: rise .9s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 110ms + 120ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(36px); } }
+
+/* Scroll-driven: reveals move with `translate` and `scale`, so a card's hover `transform` still applies.
+   The hero's photo drifts slower than the page, and its words lift away. */
+@supports (animation-timeline: scroll()) {
+  .parallax { animation: parallax linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+  .lift { animation: lift linear both; animation-timeline: scroll(root); animation-range: 0 70vh; }
+  .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  .reveal-side { animation: reveal-side linear both; animation-timeline: view(); animation-range: entry 0% entry 80%; }
+  .zoom-in { animation: zoom-in linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
+}
+@keyframes parallax { from { transform: translateY(0) scale(1.08); } to { transform: translateY(22%) scale(1.16); } }
+@keyframes lift { to { opacity: 0; transform: translateY(-90px); } }
+@keyframes reveal { from { opacity: 0; translate: 0 70px; scale: .97; } }
+@keyframes reveal-side { from { opacity: 0; translate: -60px 0; } }
+@keyframes zoom-in { from { transform: scale(1.25); } }
+
+/* Hover, for a site that takes it: a card lifts and its photo leans in. Each site adds its own signature beside it. */
+.lift-card { transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s; }
+.lift-card .pic img { transition: transform .9s cubic-bezier(.2, .8, .2, 1); }
+.lift-card:hover { transform: translateY(-8px); }
+.lift-card:hover .pic img { transform: scale(1.07); }
+.button { transition: transform .25s cubic-bezier(.2, .8, .2, 1), background-color .25s; }
+.button:hover { transform: translateY(-2px); }
+
+/* Calm: opacity only, for a site whose signature is stillness. */
+@supports (animation-timeline: view()) {
+  .fade { animation: fade linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
+}
+@keyframes fade { from { opacity: 0; } }
+
+/* The Pinies' entrances, the public site's four, played once when their row comes into view. */
+.pinies[data-entrance] .face { animation-duration: .9s; animation-fill-mode: both; animation-delay: calc(var(--i) * .14s); animation-timing-function: cubic-bezier(.3, .7, .3, 1); }
+.pinies[data-entrance='walk'] .face { animation-name: walk; }
+.pinies[data-entrance='skid'] .face { animation-name: skid; }
+.pinies[data-entrance='drop'] .face { animation-name: drop; animation-timing-function: ease-in; }
+.pinies[data-entrance='peek'] .face { animation-name: peek; }
+.pinies[data-entrance='peek'] .face:last-child { animation-name: peek, wave; animation-duration: .9s, .6s; animation-delay: calc(4 * .14s), 1.5s; animation-fill-mode: both, none; }
+.pinies:not([data-entrance]):not([data-shown]) .face { opacity: 0; }
+@keyframes walk {
+  0% { transform: translateX(-120px); opacity: 0; } 12% { opacity: 1; }
+  20% { transform: translateX(-96px) translateY(-4px); } 35% { transform: translateX(-70px) translateY(0); }
+  50% { transform: translateX(-44px) translateY(-4px); } 65% { transform: translateX(-16px) translateY(0); }
+  80% { transform: translateX(0) translateY(-16px); } 100% { transform: translateX(0) translateY(0); }
+}
+@keyframes skid {
+  0% { transform: translateX(520px) rotate(0); opacity: 0; } 15% { opacity: 1; }
+  65% { transform: translateX(-8px) rotate(-12deg); } 82% { transform: translateX(3px) rotate(3deg); } 100% { transform: translateX(0) rotate(0); }
+}
+@keyframes drop {
+  0% { transform: translateY(-120px); opacity: 0; } 15% { opacity: 1; }
+  60% { transform: translateY(0); } 75% { transform: translateY(-12px); } 90% { transform: translateY(0); } 95% { transform: translateY(-3px); } 100% { transform: translateY(0); }
+}
+@keyframes peek { 0% { transform: translateY(56px); opacity: 0; } 20% { opacity: 1; } 70% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
+@keyframes wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 50% { transform: rotate(10deg); } 75% { transform: rotate(-6deg); } }
+
+/* Still: reduced motion, and the stills this mock renders. */
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .pinies .face { opacity: 1 !important; }
+}
+html.still *, html.still *::before, html.still *::after { animation: none !important; transition: none !important; }
+html.still .pinies .face { opacity: 1 !important; }
+</style>
+<style is:global>
+:root {
+  --cream: #f5f1e8; --ink: #1d2b24; --soft: #5f6b63; --green: #1f3a2e; --brass: #a8834a; --line: #ddd5c4;
+  --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'Karla', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root { --cream: #121a16; --ink: #ece6d8; --soft: #a3aca5; --green: #0c1511; --brass: #c9a466; --line: #26332c; } }
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--cream); }
+body { background: var(--cream); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 40px; }
+/* The signature: stillness. One full-bleed picture, slowly changing as the morning goes, small words, one action. */
+.hero { position: relative; height: 100vh; min-height: 640px; overflow: hidden; color: #f8f3e8; isolation: isolate; }
+.hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; z-index: -2; animation: morning 27s ease-in-out infinite; }
+.hero img:nth-child(1) { animation-delay: 0s; } .hero img:nth-child(2) { animation-delay: 9s; } .hero img:nth-child(3) { animation-delay: 18s; }
+@keyframes morning { 0% { opacity: 0; transform: scale(1.08); } 10%, 33% { opacity: 1; } 43%, 100% { opacity: 0; transform: scale(1); } }
+html.still .hero img:first-child { opacity: 1; animation: none; }
+@media (prefers-reduced-motion: reduce) { .hero img { animation: none; } .hero img:first-child { opacity: 1; } }
+.hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(18, 26, 22, .5), rgba(18, 26, 22, .08) 30%, rgba(18, 26, 22, .12) 55%, rgba(18, 26, 22, .78)); }
+.hero h1, .hero .open, .hero header { text-shadow: 0 1px 14px rgba(10, 16, 13, .55); }
+.hero::before { content: ''; position: absolute; left: 0; bottom: 0; width: 70%; height: 46%; z-index: -1; background: radial-gradient(ellipse at 20% 100%, rgba(12, 20, 16, .62), rgba(12, 20, 16, 0) 70%); }
+.hero header { position: absolute; inset: 0 0 auto; }
+.hero header .wrap { max-width: none; display: flex; justify-content: space-between; align-items: center; height: 84px; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+.mark { font-family: var(--serif); font-size: 26px; letter-spacing: .02em; text-transform: none; font-style: italic; }
+.hero header nav { display: flex; gap: 28px; }
+.hero .bottom { position: absolute; left: 0; right: 0; bottom: 44px; }
+.hero .bottom .wrap { max-width: none; display: flex; justify-content: space-between; align-items: end; }
+.hero h1 { font-family: var(--serif); font-weight: 500; font-size: 46px; line-height: 1.15; letter-spacing: .01em; animation: settle 2.4s ease both .4s; }
+@keyframes settle { from { opacity: 0; } }
+.hero .open { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-top: 10px; }
+.hero .open i { width: 8px; height: 8px; border-radius: 50%; background: #8fd19e; animation: breathe 3s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: .35; } }
+.hero .book { border: 1px solid rgba(248, 243, 232, .7); padding: 14px 26px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; transition: background .4s, color .4s; }
+.hero .book:hover { background: #f8f3e8; color: #1d2b24; }
+.menu { padding: 110px 0 90px; }
+.menu .wrap { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; }
+.menu h2 { font-family: var(--serif); font-weight: 400; font-size: 54px; line-height: 1.05; }
+.menu .lede { color: var(--soft); font-size: 16px; line-height: 1.7; margin-top: 18px; max-width: 360px; }
+.menu dl { border-top: 1px solid var(--line); }
+.menu .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.menu dt { font-family: var(--serif); font-size: 25px; }
+.menu dd { margin: 0; }
+.menu dd.price { font-size: 15px; color: var(--brass); align-self: center; }
+.menu dd.note { grid-column: 1; color: var(--soft); font-size: 14px; }
+.bakery { display: grid; grid-template-columns: 1.4fr 1fr; min-height: 560px; background: var(--green); color: #efe8d8; }
+.bakery .pic { position: relative; overflow: hidden; }
+.bakery .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.bakery .words { padding: 72px 56px; display: flex; flex-direction: column; justify-content: center; }
+.bakery h2 { font-family: var(--serif); font-weight: 400; font-size: 46px; line-height: 1.1; }
+.bakery p { font-size: 16px; line-height: 1.7; opacity: .85; margin-top: 16px; }
+.bakery .times { margin-top: 26px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--brass); }
+.visit { padding: 90px 0; text-align: center; }
+.visit h2 { font-family: var(--serif); font-weight: 400; font-size: 40px; }
+.visit p { color: var(--soft); font-size: 16px; line-height: 1.8; margin-top: 12px; }
+footer { border-top: 1px solid var(--line); padding: 36px 0 44px; }
+footer .wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
+footer .made { display: flex; align-items: flex-end; gap: 18px; }
+.pinies { display: flex; }
+.pinies .face { width: 50px; height: 50px; margin-right: -8px; }
+.pinies .face svg { width: 100%; height: 100%; }
+footer .made p { font-size: 14px; line-height: 1.6; color: var(--soft); }
+footer .made a { color: var(--ink); text-decoration: underline; }
+footer .credits { font-size: 12px; line-height: 1.8; color: var(--soft); }
+footer .credits a { text-decoration: underline; text-decoration-color: var(--line); }
+@media (max-width: 767px) {
+  .wrap { padding: 0 18px; }
+  .hero { height: 720px; min-height: 0; }
+  .hero header nav a:not(:last-child) { display: none; }
+  .hero .bottom .wrap { flex-direction: column; align-items: start; gap: 18px; }
+  .hero h1 { font-size: 32px; }
+  .menu { padding: 64px 0 56px; }
+  .menu .wrap { grid-template-columns: 1fr; gap: 28px; }
+  .menu h2 { font-size: 40px; }
+  .bakery { grid-template-columns: 1fr; }
+  .bakery .pic { min-height: 300px; }
+  .bakery .words { padding: 40px 18px; }
+  footer .wrap { grid-template-columns: 1fr; }
+  footer .made { flex-direction: column; align-items: flex-start; }
+}
+.still-card { height: 100%; display: grid; place-items: center; background: linear-gradient(135deg, var(--sky1, #bfe8ef), var(--sky2, #ffe2b8)); font-family: var(--display); font-weight: 700; font-size: 34px; color: var(--ink); }
+</style>
+</head>
+<body>
+<section class="hero">
+  <img src="https://images.unsplash.com/photo-1567880905822-56f8e06fe630?w=2400&q=75&auto=format&fit=crop" alt="The café in morning light, a curved counter"><img src="https://images.unsplash.com/photo-1778085256733-41ffea6f8898?w=2400&q=75&auto=format&fit=crop" alt="A long wooden table by the window"><img src="https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=2400&q=75&auto=format&fit=crop" alt="A cappuccino on a wooden table">
+  <header><div class="wrap"><a class="mark" href="/">Morning Table</a><nav><a href="#">Menu</a><a href="#">Bakery</a><a href="#">Visit</a></nav></div></header>
+  <div class="bottom"><div class="wrap">
+    <div><h1>Coffee, bread and a table by the window.<br>Every morning from seven.</h1><div class="open"><i></i>Open now · until 3 pm</div></div>
+    <a class="book button" href="#">Book a table</a>
+  </div></div>
+</section>
+<main>
+  <section class="menu"><div class="wrap">
+    <div class="fade"><h2>This morning</h2><p class="lede">A short menu that changes with the bakery. Coffee from one roaster, milk from one farm.</p></div>
+    <dl>
+      <div class="item fade"><dt>Flat white</dt><dd class="price">5.0</dd><dd class="note">Our house blend, or the single origin of the week</dd></div>
+      <div class="item fade"><dt>Croissant, from the oven at seven</dt><dd class="price">5.5</dd><dd class="note">Butter, three days of folding</dd></div>
+      <div class="item fade"><dt>Sourdough, ricotta, honey</dt><dd class="price">14</dd><dd class="note">Thick toast, whipped ricotta, local honey</dd></div>
+      <div class="item fade"><dt>Eggs on the table</dt><dd class="price">19</dd><dd class="note">Soft scrambled, greens, rye</dd></div>
+    </dl>
+  </div></section>
+  <section class="bakery"><div class="pic"><img class="zoom-in" src="https://images.unsplash.com/photo-1623334044303-241021148842?w=1600&q=75&auto=format&fit=crop" alt="Croissants on the bakery table" loading="lazy"></div><div class="words fade"><h2>The bakery opens first</h2><p>The ovens are on at four. What sells out is gone until tomorrow, and the board by the door says what is left.</p><div class="times">Bread from 7 · Pastry until sold out</div></div></section>
+  <section class="visit"><div class="wrap fade"><h2>Visit</h2><p>The corner by the park · Monday to Sunday, 7 am to 3 pm<br>Walk-ins welcome; tables for six or more, book ahead.</p></div></section>
+</main>
+<footer><div class="wrap">
+  <div class="made"><div class="pinies"><span class="face"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" aria-hidden="true" focusable="false"><g><path d="M-12,33 L-13,50" stroke="#7D73D9" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="-15" cy="52" rx="6.5" ry="3.8" fill="#26215C" stroke="#7D73D9" stroke-width="2"/><path d="M12,33 L13,50" stroke="#7D73D9" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="15" cy="52" rx="6.5" ry="3.8" fill="#26215C" stroke="#7D73D9" stroke-width="2"/><path d="M-27.309516212355263,17 Q-39.30951621235526,22 -41.30951621235526,31" stroke="#7D73D9" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="M27.309516212355263,17 Q35.15475810617763,20 33,27" stroke="#7D73D9" stroke-width="4.6" fill="none" stroke-linecap="round"/><path data-piny-part="outline" d="M0,-41 A41,41 0 1 1 0,41 A41,41 0 1 1 0,-41 Z" fill="#AFA9EC" stroke="#7D73D9" stroke-width="3.2" stroke-linejoin="round"/><ellipse cx="-20" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/><ellipse cx="20" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/></g><g><ellipse cx="-13" cy="-7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="-11.5" cy="-6" r="3.80" fill="#2C2C2A"/><circle cx="-10.2" cy="-7.6" r="1.2" fill="#fff"/><ellipse cx="13" cy="-7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="14.5" cy="-6" r="3.80" fill="#2C2C2A"/><circle cx="15.8" cy="-7.6" r="1.2" fill="#fff"/></g><g><path d="M-8.00,13 Q0,18.00 8.00,13" stroke="#26215C" stroke-width="2.8" fill="none" stroke-linecap="round"/></g><g><g class="piny-prop piny-prop-roadmap"><g transform="translate(34,14) rotate(8)"><rect x="0" y="0" width="30" height="23" rx="3" fill="#F7F5EE" stroke="#5F5E5A" stroke-width="1.6"/><path d="M5,18 C10,18 9,9 15,10 C21,11 22,5 25,5" stroke="#534AB7" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="5" cy="18" r="2" fill="#534AB7"/><circle cx="25" cy="5" r="2.4" fill="#E2533F"/></g></g><circle cx="-41.30951621235526" cy="31" r="4.6" fill="#AFA9EC" stroke="#7D73D9" stroke-width="2"/><circle cx="33" cy="27" r="4.6" fill="#AFA9EC" stroke="#7D73D9" stroke-width="2"/></g></svg></span><span class="face"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" aria-hidden="true" focusable="false"><g><path d="M-12,33 L-13,50" stroke="#45B08D" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="-15" cy="52" rx="6.5" ry="3.8" fill="#04342C" stroke="#45B08D" stroke-width="2"/><path d="M12,33 L13,50" stroke="#45B08D" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="15" cy="52" rx="6.5" ry="3.8" fill="#04342C" stroke="#45B08D" stroke-width="2"/><path d="M-29,17 Q-41,22 -43,31" stroke="#45B08D" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="M29,17 Q42,21.5 45,30" stroke="#45B08D" stroke-width="4.6" fill="none" stroke-linecap="round"/><path data-piny-part="outline" d="M-39.0,-22.0 Q-39,-39 -22.0,-39.0 L22.0,-39.0 Q39,-39 39.0,-22.0 L39.0,22.0 Q39,39 22.0,39.0 L-22.0,39.0 Q-39,39 -39.0,22.0 Z" fill="#9FE1CB" stroke="#45B08D" stroke-width="3.2" stroke-linejoin="round"/><ellipse cx="-20" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/><ellipse cx="20" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/></g><g><ellipse cx="-13" cy="-7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="-11.5" cy="-6" r="3.80" fill="#2C2C2A"/><circle cx="-10.2" cy="-7.6" r="1.2" fill="#fff"/><ellipse cx="13" cy="-7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="14.5" cy="-6" r="3.80" fill="#2C2C2A"/><circle cx="15.8" cy="-7.6" r="1.2" fill="#fff"/></g><g><path d="M-8.00,13 Q0,18.00 8.00,13" stroke="#04342C" stroke-width="2.8" fill="none" stroke-linecap="round"/></g><g><g class="piny-prop piny-prop-stopwatch"><g transform="translate(46,16)"><rect x="-3" y="-15" width="6" height="5" rx="1" fill="#5F5E5A"/><circle cx="0" cy="0" r="12" fill="#F7F5EE" stroke="#5F5E5A" stroke-width="2"/><path d="M0,0 L0,-7 M0,0 L5,3" stroke="#0F6E56" stroke-width="2.2" stroke-linecap="round"/></g></g><circle cx="-43" cy="31" r="4.6" fill="#9FE1CB" stroke="#45B08D" stroke-width="2"/><circle cx="45" cy="30" r="4.6" fill="#9FE1CB" stroke="#45B08D" stroke-width="2"/></g></svg></span><span class="face"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" aria-hidden="true" focusable="false"><g><path d="M-18,34 Q-26,46 -32,51" stroke="#D5684A" stroke-width="4.6" fill="none" stroke-linecap="round"/><ellipse cx="-35" cy="53" rx="6.5" ry="3.8" fill="#4A1B0C" stroke="#D5684A" stroke-width="2"/><path d="M18,34 Q26,46 32,51" stroke="#D5684A" stroke-width="4.6" fill="none" stroke-linecap="round"/><ellipse cx="35" cy="53" rx="6.5" ry="3.8" fill="#4A1B0C" stroke="#D5684A" stroke-width="2"/><path d="M-31.125,27 Q-33.0625,37 -25,51" stroke="#D5684A" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="M31.125,27 Q33.0625,37 25,51" stroke="#D5684A" stroke-width="4.6" fill="none" stroke-linecap="round"/><path data-piny-part="outline" d="M-6.1,-38.5 Q0,-50 6.1,-38.5 L40.9,26.5 Q47,38 34.0,38.0 L-34.0,38.0 Q-47,38 -40.9,26.5 Z" fill="#F0997B" stroke="#D5684A" stroke-width="3.2" stroke-linejoin="round"/><ellipse cx="-18" cy="21" rx="5" ry="3" fill="#F06F8B" opacity=".28"/><ellipse cx="18" cy="21" rx="5" ry="3" fill="#F06F8B" opacity=".28"/></g><g><ellipse cx="-11" cy="7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="-9.5" cy="8" r="3.80" fill="#2C2C2A"/><circle cx="-8.2" cy="6.4" r="1.2" fill="#fff"/><ellipse cx="11" cy="7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="12.5" cy="8" r="3.80" fill="#2C2C2A"/><circle cx="13.8" cy="6.4" r="1.2" fill="#fff"/></g><g><path d="M-8.00,23 Q0,28.00 8.00,23" stroke="#4A1B0C" stroke-width="2.8" fill="none" stroke-linecap="round"/></g><g><g class="piny-prop piny-prop-laptop"><g transform="translate(0,44)"><rect x="-23" y="-14" width="46" height="23" rx="3" fill="#444441"/><path d="M-6,-8 l-5,5 l5,5 M6,-8 l5,5 l-5,5" stroke="#F7B79F" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="-28" y="8" width="56" height="5" rx="2" fill="#888780"/></g></g><circle cx="-25" cy="51" r="4.6" fill="#F0997B" stroke="#D5684A" stroke-width="2"/><circle cx="25" cy="51" r="4.6" fill="#F0997B" stroke="#D5684A" stroke-width="2"/></g></svg></span><span class="face"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" aria-hidden="true" focusable="false"><g><path d="M-12,33 L-13,50" stroke="#D99A2B" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="-15" cy="52" rx="6.5" ry="3.8" fill="#412402" stroke="#D99A2B" stroke-width="2"/><path d="M12,33 L13,50" stroke="#D99A2B" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="15" cy="52" rx="6.5" ry="3.8" fill="#412402" stroke="#D99A2B" stroke-width="2"/><path d="M-24.41025641025641,17 Q-36.41025641025641,22 -38.41025641025641,31" stroke="#D99A2B" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="M24.41025641025641,17 Q44.705128205128204,19.5 55,26" stroke="#D99A2B" stroke-width="4.6" fill="none" stroke-linecap="round"/><path data-piny-part="outline" d="M-26.9,-30.3 Q-22,-39 -12.0,-39.0 L12.0,-39.0 Q22,-39 26.9,-30.3 L39.1,-8.7 Q44,0 39.1,8.7 L26.9,30.3 Q22,39 12.0,39.0 L-12.0,39.0 Q-22,39 -26.9,30.3 L-39.1,8.7 Q-44,0 -39.1,-8.7 Z" fill="#FAC775" stroke="#D99A2B" stroke-width="3.2" stroke-linejoin="round"/><ellipse cx="-20" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/><ellipse cx="20" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/></g><g><ellipse cx="-13" cy="-7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="-11.5" cy="-6" r="3.80" fill="#2C2C2A"/><circle cx="-10.2" cy="-7.6" r="1.2" fill="#fff"/><ellipse cx="13" cy="-7" rx="7.5" ry="7.50" fill="#fff"/><circle cx="14.5" cy="-6" r="3.80" fill="#2C2C2A"/><circle cx="15.8" cy="-7.6" r="1.2" fill="#fff"/></g><g><path d="M-8.00,13 Q0,18.00 8.00,13" stroke="#412402" stroke-width="2.8" fill="none" stroke-linecap="round"/></g><g><g class="piny-prop piny-prop-glass"><g transform="translate(44,14)"><circle cx="0" cy="0" r="10" fill="#E6F1FB" fill-opacity=".85" stroke="#5F5E5A" stroke-width="3"/><path d="M7,7 L16,17" stroke="#5F5E5A" stroke-width="4.4" stroke-linecap="round"/></g></g><circle cx="-38.41025641025641" cy="31" r="4.6" fill="#FAC775" stroke="#D99A2B" stroke-width="2"/><circle cx="55" cy="26" r="4.6" fill="#FAC775" stroke="#D99A2B" stroke-width="2"/></g></svg></span><span class="face"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" aria-hidden="true" focusable="false"><g><path d="M-12,28 L-13,45" stroke="#378ADD" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="-15" cy="47" rx="6.5" ry="3.8" fill="#042C53" stroke="#378ADD" stroke-width="2"/><path d="M12,28 L13,45" stroke="#378ADD" stroke-width="4.6" stroke-linecap="round"/><ellipse cx="15" cy="47" rx="6.5" ry="3.8" fill="#042C53" stroke="#378ADD" stroke-width="2"/><path d="M-19,17 Q-31,22 -33,31" stroke="#378ADD" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="M19,17 Q31,22 33,31" stroke="#378ADD" stroke-width="4.6" fill="none" stroke-linecap="round"/><path data-piny-part="outline" d="M-11.3,-36.7 Q0,-48 11.3,-36.7 L36.7,-11.3 Q48,0 36.7,11.3 L11.3,36.7 Q0,48 -11.3,36.7 L-36.7,11.3 Q-48,0 -36.7,-11.3 Z" fill="#B5D4F4" stroke="#378ADD" stroke-width="3.2" stroke-linejoin="round"/><ellipse cx="-19" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/><ellipse cx="19" cy="11" rx="5" ry="3" fill="#F06F8B" opacity=".28"/></g><g><ellipse cx="-12" cy="-6" rx="7.5" ry="7.50" fill="#fff"/><circle cx="-10.5" cy="-5" r="3.80" fill="#2C2C2A"/><circle cx="-9.2" cy="-6.6" r="1.2" fill="#fff"/><ellipse cx="12" cy="-6" rx="7.5" ry="7.50" fill="#fff"/><circle cx="13.5" cy="-5" r="3.80" fill="#2C2C2A"/><circle cx="14.8" cy="-6.6" r="1.2" fill="#fff"/></g><g><path d="M-8.00,13 Q0,18.00 8.00,13" stroke="#042C53" stroke-width="2.8" fill="none" stroke-linecap="round"/></g><g><g class="piny-prop piny-prop-bulb"><g transform="translate(40,-26)"><path d="M0,-13 C-8,-13 -12,-7 -12,-2 C-12,3 -8,6 -6,9 L6,9 C8,6 12,3 12,-2 C12,-7 8,-13 0,-13 Z" fill="#FAEEDA" stroke="#5F5E5A" stroke-width="1.8" stroke-linejoin="round"/><rect x="-5" y="10" width="10" height="5" rx="1.5" fill="#5F5E5A"/><path d="M-3,3 L0,-3 L3,3" stroke="#BA7517" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g><circle cx="-33" cy="31" r="4.6" fill="#B5D4F4" stroke="#378ADD" stroke-width="2"/><circle cx="33" cy="31" r="4.6" fill="#B5D4F4" stroke="#378ADD" stroke-width="2"/></g></svg></span></div><p>Made by the Pinies in <a href="#">Piny</a>, on EmDash.</p></div>
+  <div class="credits">Photos on Unsplash by <a href="https://unsplash.com/photos/modern-coffee-shop-interior-with-curved-counter-ZZxmc66SjfM">Keghan Crossland</a>, <a href="https://unsplash.com/photos/long-wooden-table-with-chairs-in-a-modern-room-K8fPaxVDJyU">Aleksandra Dementeva</a>, <a href="https://unsplash.com/photos/cup-of-cappuccino-EcWFOYOpkpY">Joe Hepburn</a>, <a href="https://unsplash.com/photos/a-bunch-of-croissants-that-are-on-a-table-sqkXyyj4WdE">Conor Brown</a>, <a href="https://unsplash.com/photos/barista-pouring-latte-art-into-a-striped-mug-vkojeYbY39U">phoebe lynch</a>.</div>
+</div></footer>
+<script is:inline>
+// The Pinies' entrance: when a row of them comes into view, they play the next of the public site's four, in order,
+// remembered in this browser, never random. Reduced motion, no storage or no script: the Pinies simply stand there.
+(() => {
+  const order = ['walk', 'skid', 'drop', 'peek'];
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('still');
+  for (const row of document.querySelectorAll('.pinies')) {
+    row.querySelectorAll('.face').forEach((face, i) => face.style.setProperty('--i', String(i)));
+    if (still || !('IntersectionObserver' in window)) { row.dataset.shown = ''; continue; }
+    const seen = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      seen.disconnect();
+      let next = 0;
+      try { next = (Number(localStorage.getItem('tm06-entrance-next')) || 0) % order.length; localStorage.setItem('tm06-entrance-next', String(next + 1)); } catch {}
+      row.dataset.entrance = row.dataset.play || order[next];
+      setTimeout(() => { row.dataset.shown = ''; delete row.dataset.entrance; }, 2600);
+    }, { threshold: 0.6 });
+    seen.observe(row);
+  }
+})();
+
+// A hero's loop: the poster shows first; the clip loads and plays only with motion allowed and the page visible.
+(() => {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('still');
+  for (const video of document.querySelectorAll('video[data-src]')) {
+    if (still) continue;
+    video.src = video.dataset.src;
+    video.play().catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
