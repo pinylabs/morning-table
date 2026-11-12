@@ -1,8 +1,9 @@
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
+import tailwindcss from "@tailwindcss/vite";
 import { d1, r2 } from "@emdash-cms/cloudflare";
 import icon from "astro-iconset";
-import { defineConfig, fontProviders } from "astro/config";
+import { defineConfig } from "astro/config";
 import emdash from "emdash/astro";
 
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
 		responsiveStyles: true,
 	},
 	vite: {
+		plugins: [tailwindcss()],
 		ssr: {
 			optimizeDeps: {
 				// Pre-bundle so it isn't discovered mid-render, which would trigger
@@ -73,22 +75,7 @@ export default defineConfig({
 			storage: r2({ binding: "MEDIA" }),
 		}),
 	],
-	fonts: [
-		{
-			provider: fontProviders.google(),
-			name: "Inter",
-			cssVariable: "--font-body",
-			weights: [400, 500, 600, 700],
-			fallbacks: ["sans-serif"],
-		},
-		{
-			provider: fontProviders.google(),
-			name: "Instrument Serif",
-			cssVariable: "--font-display",
-			weights: [400],
-			styles: ["normal", "italic"],
-			fallbacks: ["serif"],
-		},
-	],
+	// The webfonts, Cormorant Garamond and Karla, come from the Google Fonts
+	// link in src/layouts/Base.astro and src/pages/index.astro.
 	devToolbar: { enabled: false },
 });

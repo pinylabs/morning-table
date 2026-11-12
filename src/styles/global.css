@@ -1,0 +1,829 @@
+/*
+  global.css -- the site's one stylesheet: Tailwind, the theme's tokens
+  (src/styles/theme.css, the file to edit to retheme the site), the dark
+  variant, the base element styles and the few components that utilities
+  cannot express cleanly: repeated groups (buttons, small capitals,
+  headlines, cards), motion, photo shades and EmDash's long text.
+  src/layouts/Base.astro and src/pages/index.astro import it.
+*/
+
+@import "tailwindcss";
+@import "./theme.css";
+
+/*
+  Dark mode follows the system, and the footer's switcher pins a choice
+  with a `light` or `dark` class on <html> (as EmDash's own images do).
+*/
+@custom-variant dark {
+	&:where(.dark, .dark *) {
+		@slot;
+	}
+	@media (prefers-color-scheme: dark) {
+		&:where(:not(.light, .light *)) {
+			@slot;
+		}
+	}
+}
+
+/* A page whose first block is a hero photo: the header lies on the picture. */
+@custom-variant over-photo (&:where(body:has([data-blocks] > [data-hero="photo"]:first-child) *));
+
+/* The content column: the page width less a gutter on each side. */
+@utility wrap {
+	width: min(100% - var(--spacing-gutter) * 2, var(--container-page));
+	margin-inline: auto;
+}
+
+/* The focus ring's colour for everything inside, for example on photos and dark bands. */
+@utility focus-ring-* {
+	--focus-ring: --value(--color-*);
+}
+
+@layer base {
+	:root {
+		color-scheme: light dark;
+		--focus-ring: var(--color-neutral-700);
+
+		@variant dark {
+			--focus-ring: var(--color-tertiary-500);
+		}
+	}
+
+	:root.light {
+		color-scheme: light;
+	}
+
+	:root.dark {
+		color-scheme: dark;
+	}
+
+	html {
+		@apply scroll-smooth bg-tertiary-200 dark:bg-neutral-900;
+	}
+
+	body {
+		@apply text-neutral-700 antialiased dark:text-tertiary-500;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-serif leading-title font-medium tracking-title text-balance;
+	}
+
+	h1 {
+		@apply text-h1;
+	}
+
+	h2 {
+		@apply text-h2;
+	}
+
+	h3 {
+		@apply text-h3;
+	}
+
+	h4 {
+		@apply text-h4;
+	}
+
+	/* Bare links in authored content; component links style themselves. */
+	p a:not([class]),
+	li a:not([class]) {
+		@apply text-primary-700 underline underline-offset-2 dark:text-secondary-400;
+	}
+
+	:where(:not([class*="emdash"]):not([class*="ec-"])):focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+	}
+
+	/* A question draws its own plus. */
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	/* Still under reduced motion: no animation, transition or smooth scroll. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation: none !important;
+			transition: none !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+@layer components {
+	.skip-link {
+		@apply fixed start-3 top-3 z-100 rounded-pill bg-primary-700 px-4.5 py-2.5 text-small font-medium text-tertiary-200 dark:bg-secondary-400 dark:text-neutral-900;
+		translate: 0 calc(-100% - 24px);
+		transition: translate 150ms var(--ease-calm);
+
+		&:focus {
+			translate: 0 0;
+		}
+	}
+
+	/* Buttons: .btn with a size (.btn-sm, .btn-lg) and a colour (.btn-primary ...) */
+	.btn {
+		@apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-pill px-5.5 py-2.5 text-center text-label/control font-medium tracking-label uppercase hover:-translate-y-0.5;
+		transition:
+			background-color 0.4s var(--ease-calm),
+			color 0.4s var(--ease-calm),
+			box-shadow 0.4s var(--ease-calm),
+			translate 0.25s var(--ease-calm);
+	}
+
+	.btn-sm {
+		@apply min-h-10 px-4.5 text-tag;
+	}
+
+	.btn-lg {
+		@apply min-h-12.5 px-6.5 text-small;
+	}
+
+	.btn-primary {
+		@apply bg-primary-700 text-tertiary-200 hover:bg-primary-600 dark:bg-secondary-400 dark:text-neutral-900 dark:hover:bg-secondary-300;
+	}
+
+	/* An outline that fills, as the home's "Book a table" */
+	.btn-secondary {
+		@apply text-neutral-700 inset-ring inset-ring-tertiary-700 hover:bg-neutral-700 hover:text-tertiary-200 hover:inset-ring-neutral-700 dark:text-tertiary-500 dark:inset-ring-neutral-500 dark:hover:bg-tertiary-500 dark:hover:text-neutral-900 dark:hover:inset-ring-tertiary-500;
+	}
+
+	/* On photos and the forest band: the home hero's "Book a table" */
+	.btn-light {
+		@apply text-tertiary-100 inset-ring inset-ring-tertiary-100/70 focus-ring-tertiary-300 hover:bg-tertiary-100 hover:text-neutral-700;
+	}
+
+	.btn-glass {
+		@apply text-tertiary-100 underline decoration-tertiary-100/45 underline-offset-6 focus-ring-tertiary-300 hover:decoration-current;
+	}
+
+	.text-link {
+		@apply inline-flex items-center gap-2 text-label font-medium tracking-label uppercase underline decoration-tertiary-700 underline-offset-6 hover:decoration-current dark:decoration-neutral-500 dark:hover:decoration-current;
+		transition: text-decoration-color 200ms var(--ease-calm);
+	}
+
+	.arrow {
+		flex: none;
+		transition: translate 200ms var(--ease-calm);
+
+		&:dir(rtl) {
+			scale: -1 1;
+		}
+	}
+
+	:is(.btn, .text-link) .arrow {
+		font-size: var(--text-meta);
+	}
+
+	:is(.btn, .text-link):hover .arrow {
+		translate: 2px 0;
+
+		&:dir(rtl) {
+			translate: -2px 0;
+		}
+	}
+
+	/* The home's small capitals: "Bread from 7 · Pastry until sold out" */
+	.eyebrow {
+		@apply inline-block font-sans text-label/label font-medium tracking-label text-secondary-600 uppercase dark:text-secondary-400;
+	}
+
+	/* Serif display words; set a size with text-* */
+	.display {
+		@apply font-serif leading-headline font-normal tracking-normal text-balance wrap-break-word;
+	}
+
+	.headline {
+		@apply font-serif text-headline/headline font-normal tracking-normal text-balance wrap-break-word;
+	}
+
+	.lead {
+		@apply text-lead/copy text-pretty text-neutral-400 dark:text-neutral-100;
+	}
+
+	.card {
+		@apply rounded-card bg-tertiary-50 text-neutral-700 ring ring-tertiary-600 dark:bg-neutral-800 dark:text-tertiary-500 dark:ring-neutral-600;
+		transition:
+			box-shadow 200ms var(--ease-calm),
+			translate 200ms var(--ease-calm);
+	}
+
+	.media-chip {
+		@apply absolute start-chip bottom-chip z-1 inline-flex min-h-10 items-center rounded-pill bg-neutral-900/55 px-4 py-2.25 text-caption/chip font-medium tracking-label text-tertiary-100 uppercase backdrop-blur-chip max-sm:text-micro;
+		max-width: calc(100% - 2 * var(--spacing-chip));
+	}
+
+	.empty-state {
+		@apply flex max-w-empty flex-col items-center gap-5 py-section text-center;
+	}
+
+	/* Photo shades: dark at the top for the header, clear in the middle, deep at the foot for the words */
+	.shade-hero::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background:
+			radial-gradient(
+				ellipse at 20% 100%,
+				color-mix(in srgb, var(--color-primary-950) 55%, transparent),
+				transparent 60%
+			),
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--color-neutral-900) 50%, transparent),
+				color-mix(in srgb, var(--color-neutral-900) 8%, transparent) 30%,
+				color-mix(in srgb, var(--color-neutral-900) 12%, transparent) 55%,
+				color-mix(in srgb, var(--color-neutral-900) 78%, transparent)
+			);
+	}
+
+	.shade-cta::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background:
+			radial-gradient(
+				ellipse at 15% 100%,
+				color-mix(in srgb, var(--color-primary-950) 60%, transparent),
+				transparent 65%
+			),
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--color-neutral-900) 10%, transparent),
+				color-mix(in srgb, var(--color-neutral-900) 20%, transparent) 45%,
+				color-mix(in srgb, var(--color-neutral-900) 78%, transparent)
+			);
+	}
+
+	/* The home's hero: three photos crossfade as the morning goes */
+	.shade-morning::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--color-neutral-900) 50%, transparent),
+			color-mix(in srgb, var(--color-neutral-900) 8%, transparent) 30%,
+			color-mix(in srgb, var(--color-neutral-900) 12%, transparent) 55%,
+			color-mix(in srgb, var(--color-neutral-900) 78%, transparent)
+		);
+	}
+
+	.shade-morning::before {
+		content: "";
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		z-index: -1;
+		width: 70%;
+		height: 46%;
+		background: radial-gradient(
+			ellipse at 20% 100%,
+			color-mix(in srgb, var(--color-primary-950) 62%, transparent),
+			transparent 70%
+		);
+	}
+
+	.morning-photo {
+		opacity: 0;
+		animation: morning 27s ease-in-out infinite;
+
+		&:nth-child(2) {
+			animation-delay: 9s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: 18s;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			&:first-child {
+				opacity: 1;
+			}
+		}
+	}
+
+	/*
+	  Motion: the home's calm, a slow settle and nothing that bounces. Only
+	  transform, translate, scale and opacity move. The reduced-motion rule
+	  in the base layer stops all of it, and a browser without scroll
+	  timelines simply shows the page.
+	*/
+	.rise {
+		animation: rise-in 1.2s var(--ease-calm) both;
+		animation-delay: calc(var(--rise-index, 0) * 110ms + 120ms);
+	}
+
+	.hero-settle {
+		animation: hero-settle 2.4s var(--ease-calm) both;
+	}
+
+	.appear {
+		animation: appear 2.4s ease both 0.4s;
+	}
+
+	.breathe {
+		animation: breathe 3s ease-in-out infinite;
+	}
+
+	@supports (animation-timeline: view()) {
+		/* A photo settles from a slight zoom as it scrolls in */
+		.settle img {
+			animation: media-settle linear both;
+			animation-timeline: view();
+			animation-range: entry 0% cover 45%;
+		}
+
+		.zoom-in {
+			animation: zoom-in linear both;
+			animation-timeline: view();
+			animation-range: entry 0% cover 50%;
+		}
+
+		/* Words and dishes fade in as they scroll into view */
+		.fade {
+			animation: fade linear both;
+			animation-timeline: view();
+			animation-range: entry 0% entry 90%;
+		}
+	}
+
+	/* The Pinies' entrances, the public site's four, played once when their row comes into view. */
+	.pinies[data-entrance] .face {
+		animation-duration: 0.9s;
+		animation-fill-mode: both;
+		animation-delay: calc(var(--i) * 0.14s);
+		animation-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+	}
+
+	.pinies[data-entrance="walk"] .face {
+		animation-name: walk;
+	}
+
+	.pinies[data-entrance="skid"] .face {
+		animation-name: skid;
+	}
+
+	.pinies[data-entrance="drop"] .face {
+		animation-name: drop;
+		animation-timing-function: ease-in;
+	}
+
+	.pinies[data-entrance="peek"] .face {
+		animation-name: peek;
+	}
+
+	.pinies[data-entrance="peek"] .face:last-child {
+		animation-name: peek, wave;
+		animation-duration: 0.9s, 0.6s;
+		animation-delay: calc(4 * 0.14s), 1.5s;
+		animation-fill-mode: both, none;
+	}
+
+	.pinies:not([data-entrance]):not([data-shown]) .face {
+		opacity: 0;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pinies .face {
+			opacity: 1 !important;
+		}
+	}
+
+	/* The stills the home's mock renders: html.still holds the first moment. */
+	html.still body.home,
+	html.still body.home *,
+	html.still body.home *::before,
+	html.still body.home *::after {
+		animation: none !important;
+		transition: none !important;
+	}
+
+	html.still .morning-photo:first-child {
+		opacity: 1;
+	}
+
+	html.still .pinies .face {
+		opacity: 1 !important;
+	}
+
+	/* A row of logos that scrolls sideways, and stands still under reduced motion */
+	.marquee {
+		display: flex;
+		gap: var(--spacing-marquee);
+		width: 100%;
+		margin-inline: auto;
+		overflow: hidden;
+		mask-image: linear-gradient(
+			to right,
+			transparent,
+			var(--color-black) 12%,
+			var(--color-black) calc(88% - var(--spacing-gutter) - 40px),
+			transparent calc(100% - var(--spacing-gutter) - 40px)
+		);
+
+		&:dir(rtl) {
+			mask-image: linear-gradient(
+				to left,
+				transparent,
+				var(--color-black) 12%,
+				var(--color-black) calc(88% - var(--spacing-gutter) - 40px),
+				transparent calc(100% - var(--spacing-gutter) - 40px)
+			);
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			display: block;
+			padding-inline: var(--spacing-gutter);
+			mask-image: none;
+
+			&:dir(rtl) {
+				mask-image: none;
+			}
+		}
+	}
+
+	.marquee-group {
+		@apply flex h-16 min-w-full flex-none items-center justify-around gap-marquee text-neutral-400 dark:text-neutral-100 motion-reduce:h-auto motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:gap-y-6;
+		animation: logos-marquee calc(var(--logo-count, 6) * 8s) linear infinite;
+
+		&:dir(rtl) {
+			animation-name: logos-marquee-rtl;
+		}
+
+		:is(.marquee:hover, .marquee[data-paused]) & {
+			animation-play-state: paused;
+		}
+
+		&[aria-hidden="true"] {
+			@apply motion-reduce:hidden;
+		}
+
+		/* Six lettering styles in turn, for logos without a picture */
+		& > li {
+			white-space: nowrap;
+		}
+
+		& > li:nth-child(6n + 1) {
+			@apply font-sans text-small/none font-semibold tracking-logo-spaced uppercase;
+		}
+
+		& > li:nth-child(6n + 2) {
+			@apply font-serif text-logo/none font-normal italic;
+		}
+
+		& > li:nth-child(6n + 3) {
+			@apply font-sans text-subhead/none font-bold tracking-logo-tight;
+		}
+
+		& > li:nth-child(6n + 4) {
+			@apply font-serif text-logo-sm/none font-normal tracking-mark;
+		}
+
+		& > li:nth-child(6n + 5) {
+			@apply font-sans text-subhead/none font-medium tracking-logo-snug lowercase;
+		}
+
+		& > li:nth-child(6n + 6) {
+			@apply font-sans text-label/none font-normal tracking-logo-wide uppercase;
+		}
+	}
+
+	.marquee-toggle {
+		@apply absolute top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-pill bg-tertiary-50 text-small text-neutral-300 ring ring-tertiary-600 hover:text-neutral-700 hover:ring-tertiary-700 motion-reduce:hidden dark:bg-neutral-800 dark:text-neutral-200 dark:ring-neutral-600 dark:hover:text-tertiary-500 dark:hover:ring-neutral-500;
+		inset-inline-end: var(--spacing-gutter);
+		transition:
+			color 160ms var(--ease-calm),
+			box-shadow 160ms var(--ease-calm);
+	}
+
+	/* Quotation marks around a quote's paragraphs */
+	.quoted {
+		quotes: "\201C" "\201D";
+
+		& > p:first-child::before {
+			content: open-quote;
+		}
+
+		& > p:last-child::after {
+			content: close-quote;
+		}
+	}
+
+	/* EmDash Portable Text: a page's long text */
+	.prose-body {
+		@apply text-lead/copy text-pretty text-neutral-400 dark:text-neutral-100;
+
+		/* The colours EmDash's own embeds, tables and captions read */
+		--color-muted: var(--color-neutral-300);
+		--color-border: var(--color-tertiary-600);
+		--color-surface: var(--color-tertiary-50);
+
+		@variant dark {
+			--color-muted: var(--color-neutral-200);
+			--color-border: var(--color-neutral-600);
+			--color-surface: var(--color-neutral-800);
+		}
+
+		& > * + * {
+			margin-block-start: 1em;
+		}
+
+		& :is(h2, h3, h4) {
+			@apply font-serif leading-headline font-normal tracking-normal text-balance text-neutral-700 dark:text-tertiary-500;
+		}
+
+		& h2 {
+			@apply text-prose;
+			margin-block-start: 1.8em;
+		}
+
+		& :is(h3, h4) {
+			@apply text-prose-sm;
+			margin-block-start: 1.5em;
+		}
+
+		& :is(ul, ol) {
+			padding-inline-start: 1.4em;
+		}
+
+		& ul {
+			list-style: disc;
+		}
+
+		& ol {
+			list-style: decimal;
+		}
+
+		& li::marker {
+			@apply text-neutral-300 dark:text-neutral-200;
+		}
+
+		& li + li {
+			margin-block-start: 0.4em;
+		}
+
+		& a {
+			@apply text-neutral-700 underline decoration-tertiary-700 underline-offset-3 hover:decoration-current dark:text-tertiary-500 dark:decoration-neutral-500 dark:hover:decoration-current;
+		}
+
+		& strong {
+			@apply font-semibold text-neutral-700 dark:text-tertiary-500;
+		}
+
+		& blockquote {
+			@apply border-s-2 border-tertiary-700 ps-5 dark:border-neutral-500;
+		}
+
+		& img {
+			@apply h-auto max-w-full rounded-media;
+		}
+	}
+}
+
+/* Page changes cross-fade: the browser's own cross-document view transition, off under reduced motion. */
+@view-transition {
+	navigation: auto;
+}
+
+::view-transition-old(root) {
+	animation: 260ms cubic-bezier(0.4, 0, 1, 1) both vt-out;
+}
+
+::view-transition-new(root) {
+	animation: 420ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-in;
+}
+
+::view-transition-group(*) {
+	animation-duration: 520ms;
+	animation-timing-function: var(--ease-calm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	@view-transition {
+		navigation: none;
+	}
+}
+
+@keyframes vt-out {
+	to {
+		opacity: 0;
+		transform: translateY(-12px);
+	}
+}
+
+@keyframes vt-in {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+}
+
+@keyframes rise-in {
+	from {
+		opacity: 0;
+		translate: 0 18px;
+	}
+}
+
+@keyframes hero-settle {
+	from {
+		opacity: 0;
+		transform: scale(1.06);
+	}
+}
+
+@keyframes media-settle {
+	from {
+		scale: 1.12;
+	}
+
+	to {
+		scale: 1;
+	}
+}
+
+@keyframes zoom-in {
+	from {
+		transform: scale(1.25);
+	}
+}
+
+@keyframes fade {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes appear {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes breathe {
+	50% {
+		opacity: 0.35;
+	}
+}
+
+@keyframes morning {
+	0% {
+		opacity: 0;
+		transform: scale(1.08);
+	}
+	10%,
+	33% {
+		opacity: 1;
+	}
+	43%,
+	100% {
+		opacity: 0;
+		transform: scale(1);
+	}
+}
+
+@keyframes walk {
+	0% {
+		transform: translateX(-120px);
+		opacity: 0;
+	}
+	12% {
+		opacity: 1;
+	}
+	20% {
+		transform: translateX(-96px) translateY(-4px);
+	}
+	35% {
+		transform: translateX(-70px) translateY(0);
+	}
+	50% {
+		transform: translateX(-44px) translateY(-4px);
+	}
+	65% {
+		transform: translateX(-16px) translateY(0);
+	}
+	80% {
+		transform: translateX(0) translateY(-16px);
+	}
+	100% {
+		transform: translateX(0) translateY(0);
+	}
+}
+
+@keyframes skid {
+	0% {
+		transform: translateX(520px) rotate(0);
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+	65% {
+		transform: translateX(-8px) rotate(-12deg);
+	}
+	82% {
+		transform: translateX(3px) rotate(3deg);
+	}
+	100% {
+		transform: translateX(0) rotate(0);
+	}
+}
+
+@keyframes drop {
+	0% {
+		transform: translateY(-120px);
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+	60% {
+		transform: translateY(0);
+	}
+	75% {
+		transform: translateY(-12px);
+	}
+	90% {
+		transform: translateY(0);
+	}
+	95% {
+		transform: translateY(-3px);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@keyframes peek {
+	0% {
+		transform: translateY(56px);
+		opacity: 0;
+	}
+	20% {
+		opacity: 1;
+	}
+	70% {
+		transform: translateY(-5px);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@keyframes wave {
+	0%,
+	100% {
+		transform: rotate(0);
+	}
+	25% {
+		transform: rotate(-12deg);
+	}
+	50% {
+		transform: rotate(10deg);
+	}
+	75% {
+		transform: rotate(-6deg);
+	}
+}
+
+@keyframes logos-marquee {
+	to {
+		translate: calc(-100% - var(--spacing-marquee)) 0;
+	}
+}
+
+@keyframes logos-marquee-rtl {
+	to {
+		translate: calc(100% + var(--spacing-marquee)) 0;
+	}
+}
+
+/*
+  Outside every layer on purpose: EmDash's <Image> styles its <img> with an
+  unlayered `.emdash-image-media { max-width: 100%; height: auto }`, which
+  beats any layered rule, so a photo that fills its frame must be unlayered
+  and more specific. No display here: EmDash hides the inactive light or
+  dark variant with display: none.
+*/
+.photo-fill,
+.photo-fill img,
+.photo-fill img.emdash-image-media,
+img.photo-fill.emdash-image-media {
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	max-height: none;
+	object-fit: cover;
+}

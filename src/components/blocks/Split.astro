@@ -25,108 +25,82 @@ const cta =
 <section
 	id={anchor_id || undefined}
 	class:list={[
-		"split",
-		"section",
-		{ "split--image-first": image_first, "split--text-only": !image },
+		"scroll-mt-22",
+		image
+			? "my-section-half bg-primary-700 text-tertiary-300 focus-ring-tertiary-300 dark:bg-primary-950"
+			: "py-section-half",
 	]}
 >
-	<div class="container split__grid">
-		<div>
+	<div
+		class:list={
+			image
+				? [
+						"grid min-h-140 max-md:min-h-0 max-md:grid-cols-1",
+						image_first ? "grid-cols-split-flip" : "grid-cols-split",
+					]
+				: "wrap max-w-intro"
+		}
+	>
+		<div
+			class:list={{
+				"flex flex-col items-start justify-center px-14 py-18 max-md:px-gutter max-md:py-10": image,
+			}}
+		>
 			{eyebrow && <p class="eyebrow">{eyebrow}</p>}
-			<h2 class="section-headline split__headline">{headline}</h2>
-			{paragraphs.map((paragraph) => <p class="split__body">{paragraph}</p>)}
-			{points.length > 0 && (
-				<ul class="split__points" role="list">
-					{points.map((point) => (
-						<li>
-							<span class="tick" aria-hidden="true">
-								<Icon name="ph:check" />
-							</span>
-							{point}
-						</li>
-					))}
-				</ul>
-			)}
-			{cta && (
-				<a href={cta.url} class="text-link split__link">
-					{cta.label}
-					<Icon name="ph:arrow-right" aria-hidden="true" class="arrow" />
-				</a>
-			)}
+			<h2 class:list={["headline text-band/heading", { "mt-4": eyebrow }]}>{headline}</h2>
+			{
+				paragraphs.map((paragraph) => (
+					<p
+						class:list={[
+							"mt-4 max-w-copy text-body/copy text-pretty",
+							image ? "text-tertiary-300/80" : "text-neutral-400 dark:text-neutral-100",
+						]}
+					>
+						{paragraph}
+					</p>
+				))
+			}
+			{
+				points.length > 0 && (
+					<ul
+						class="mt-6.5 grid gap-2 text-label/note tracking-label text-secondary-600 uppercase dark:text-secondary-400"
+						role="list"
+					>
+						{points.map((point) => (
+							<li>{point}</li>
+						))}
+					</ul>
+				)
+			}
+			{
+				cta && (
+					<a
+						href={cta.url}
+						class:list={[
+							"text-link mt-7.5",
+							{ "decoration-tertiary-300/45 hover:decoration-current": image },
+						]}
+					>
+						{cta.label}
+						<Icon name="ph:arrow-right" aria-hidden="true" class="arrow" />
+					</a>
+				)
+			}
 		</div>
-		{image && (
-			<figure class="media settle split__media">
-				<div class="media__img">
-					<Image image={image} sizes="(max-width: 960px) 100vw, 600px" />
-				</div>
-				{image_caption && (
-					<figcaption class="media-chip">
-						{image_caption}
-					</figcaption>
-				)}
-			</figure>
-		)}
+		{
+			image && (
+				<figure
+					class:list={[
+						"settle relative isolate min-h-full overflow-hidden rounded-media max-md:-order-1 max-md:min-h-75",
+						{ "-order-1": image_first },
+					]}
+				>
+					<div class="photo-fill absolute inset-0">
+						<Image image={image} sizes="(max-width: 767px) 100vw, 60vw" />
+					</div>
+					{image_caption && <figcaption class="media-chip">{image_caption}</figcaption>}
+				</figure>
+			)
+		}
 	</div>
 </section>
-
-<style>
-	.split__grid {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		gap: clamp(48px, 7vw, 112px);
-		align-items: center;
-	}
-
-	.split--text-only .split__grid {
-		grid-template-columns: minmax(0, 780px);
-	}
-
-	.eyebrow + .split__headline {
-		margin-block-start: 18px;
-	}
-
-	.split__body {
-		max-width: 46ch;
-		margin-block-start: 20px;
-		font-size: 17px;
-		color: var(--color-text-secondary);
-		text-wrap: pretty;
-	}
-
-	.split__points {
-		display: grid;
-		gap: 14px;
-		margin-block-start: 28px;
-		list-style: none;
-	}
-
-	.split__points li {
-		display: flex;
-		align-items: flex-start;
-		gap: 12px;
-		font-size: 15.5px;
-		color: var(--color-text-secondary);
-	}
-
-	.split__link {
-		margin-block-start: 32px;
-	}
-
-	.split__media {
-		aspect-ratio: 4 / 5;
-	}
-
-	.split--image-first .split__media {
-		order: -1;
-	}
-
-	@media (max-width: 960px) {
-		.split__grid {
-			grid-template-columns: minmax(0, 1fr);
-		}
-
-		.split--image-first .split__media {
-			order: 0;
-		}
-	}
-</style>

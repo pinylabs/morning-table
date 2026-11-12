@@ -24,33 +24,110 @@ const secondaryCta =
 
 <section
 	id={anchor_id || undefined}
-	class:list={["hero", { "hero--centered": centered }]}
+	data-hero={image ? "photo" : "plain"}
+	class:list={[
+		"relative isolate scroll-mt-22",
+		image
+			? "shade-hero mb-section-half grid min-h-hero items-end overflow-hidden text-tertiary-100 focus-ring-tertiary-100 max-md:min-h-150"
+			: "pt-opening pb-section-half",
+	]}
 >
-	<div class="container">
+	{
+		image && (
+			<div class="photo-fill hero-settle absolute inset-0 -z-2">
+				<Image image={image} priority sizes="100vw" />
+			</div>
+		)
+	}
+	<div
+		class:list={[
+			"wrap",
+			image && "pt-35 pb-11 text-shadow-photo max-md:pt-30 max-md:pb-9",
+			{ "text-center": centered },
+		]}
+	>
 		{
 			eyebrow && eyebrowUrl && (
-				<a href={eyebrowUrl} class="hero__announce rise">
+				<a
+					href={eyebrowUrl}
+					class:list={[
+						"rise inline-flex items-center gap-2.5 text-label font-medium tracking-label uppercase underline decoration-transparent underline-offset-6 transition-colors duration-200 hover:decoration-current",
+						image ? "text-tertiary-100" : "text-secondary-600 dark:text-secondary-400",
+					]}
+				>
 					{eyebrow}
 					<Icon name="ph:arrow-right" aria-hidden="true" class="arrow" />
 				</a>
 			)
 		}
-		{eyebrow && !eyebrowUrl && <p class="hero__announce rise">{eyebrow}</p>}
-		<h1 class="display hero__headline rise">{headline}</h1>
+		{
+			eyebrow && !eyebrowUrl && (
+				<p
+					class:list={[
+						"rise inline-flex items-center gap-2.5 text-label font-medium tracking-label uppercase",
+						image ? "text-tertiary-100" : "text-secondary-600 dark:text-secondary-400",
+					]}
+				>
+					{eyebrow}
+				</p>
+			)
+		}
+		<h1
+			class:list={[
+				"rise max-w-headline tracking-title wrap-break-word",
+				image ? "text-hero/title" : "text-headline/headline font-normal",
+				{ "mt-4.5": eyebrow, "mx-auto": centered },
+			]}
+			style="--rise-index: 1"
+		>
+			{headline}
+		</h1>
+		{
+			image && image_caption && (
+				<p
+					class="rise mt-2.5 text-meta font-semibold tracking-nav uppercase"
+					style="--rise-index: 2"
+				>
+					{image_caption}
+				</p>
+			)
+		}
 		{
 			(subheadline || primaryCta || secondaryCta) && (
-				<div class="hero__row rise">
-					{subheadline && <p class="lead hero__lead">{subheadline}</p>}
+				<div
+					class:list={[
+						"rise mt-5.5 grid gap-x-8 gap-y-4.5",
+						centered
+							? "grid-cols-1 items-end justify-items-center max-md:items-start"
+							: "grid-cols-row items-end max-md:grid-cols-1 max-md:items-start",
+					]}
+					style="--rise-index: 3"
+				>
+					{subheadline && (
+						<p
+							class:list={[
+								"lead max-w-lead text-body",
+								{ "text-tertiary-100/90": image, "mx-auto": centered },
+							]}
+						>
+							{subheadline}
+						</p>
+					)}
 					{(primaryCta || secondaryCta) && (
-						<div class="actions">
+						<div class:list={["flex flex-wrap gap-2.5", { "justify-center": centered }]}>
 							{primaryCta && (
-								<a href={primaryCta.url} class="btn btn-primary btn-lg">
+								<a
+									href={primaryCta.url}
+									class:list={["btn btn-lg", image ? "btn-light" : "btn-primary"]}
+								>
 									{primaryCta.label}
-									<Icon name="ph:arrow-right" aria-hidden="true" class="arrow" />
 								</a>
 							)}
 							{secondaryCta && (
-								<a href={secondaryCta.url} class="btn btn-secondary btn-lg">
+								<a
+									href={secondaryCta.url}
+									class:list={["btn btn-lg", image ? "btn-glass" : "btn-secondary"]}
+								>
 									{secondaryCta.label}
 								</a>
 							)}
@@ -60,113 +137,4 @@ const secondaryCta =
 			)
 		}
 	</div>
-	{
-		image && (
-			<figure class="sheet media settle hero__media">
-				<div class="media__img">
-					<Image
-						image={image}
-						priority
-						sizes="(max-width: 960px) 178vw, min(100vw, 1680px)"
-					/>
-				</div>
-				{image_caption && (
-					<figcaption class="media-chip">
-						{image_caption}
-					</figcaption>
-				)}
-			</figure>
-		)
-	}
 </section>
-
-<style>
-	.hero {
-		padding-block-start: clamp(56px, 7vw, 104px);
-	}
-
-	.hero__announce {
-		display: inline-flex;
-		align-items: center;
-		gap: 10px;
-		min-height: 34px;
-		padding-block: 6px;
-		padding-inline: 14px;
-		border-radius: 17px;
-		background: var(--color-surface);
-		box-shadow: var(--shadow-card);
-		font-size: 13.5px;
-		line-height: 1.35;
-		color: var(--color-text-secondary);
-		transition: box-shadow 160ms var(--ease-out);
-	}
-
-	.hero__announce :global(.arrow) {
-		flex: none;
-		color: var(--color-muted);
-	}
-
-	a.hero__announce:hover {
-		box-shadow: var(--shadow-card-hover);
-	}
-
-	.hero__headline {
-		--rise-index: 1;
-		max-width: 16ch;
-		font-size: var(--font-size-display);
-		line-height: var(--leading-tight);
-		letter-spacing: var(--tracking-tight);
-	}
-
-	.hero__announce + .hero__headline {
-		margin-block-start: 28px;
-	}
-
-	.hero__row {
-		--rise-index: 2;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: end;
-		gap: 32px;
-		margin-block-start: 36px;
-	}
-
-	.hero__lead {
-		max-width: 50ch;
-	}
-
-	.hero__media {
-		margin-block-start: clamp(48px, 5vw, 72px);
-		aspect-ratio: 21 / 9;
-		border-radius: var(--radius-sheet);
-	}
-
-	.hero--centered .container {
-		text-align: center;
-	}
-
-	.hero--centered .hero__headline {
-		max-width: 18ch;
-		margin-inline: auto;
-		font-size: clamp(44px, 6.2vw, 88px);
-	}
-
-	.hero--centered .hero__row {
-		grid-template-columns: minmax(0, 1fr);
-		justify-items: center;
-	}
-
-	.hero--centered .actions {
-		justify-content: center;
-	}
-
-	@media (max-width: 960px) {
-		.hero__row {
-			grid-template-columns: minmax(0, 1fr);
-		}
-
-		.hero__media {
-			aspect-ratio: 1;
-		}
-	}
-</style>

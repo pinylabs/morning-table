@@ -14,27 +14,45 @@ const hasIntro = Boolean(headline || subheadline);
 
 <section
 	id={anchor_id || undefined}
-	class:list={["container", "section", "faq", { "faq--with-intro": hasIntro }]}
+	class:list={[
+		"wrap grid scroll-mt-22 items-start gap-columns py-section-half",
+		{ "grid-cols-menu max-md:grid-cols-1": hasIntro },
+	]}
 >
 	{
 		hasIntro && (
-			<div class="faq__intro">
-				{headline && <h2 class="section-headline">{headline}</h2>}
-				{subheadline && <p class="faq__subheadline">{subheadline}</p>}
+			<div class="sticky top-28 max-md:static">
+				{headline && <h2 class="headline">{headline}</h2>}
+				{subheadline && (
+					<p
+						class:list={[
+							"max-w-lede text-body/copy text-pretty text-neutral-400 dark:text-neutral-100",
+							{ "mt-4.5": headline },
+						]}
+					>
+						{subheadline}
+					</p>
+				)}
 			</div>
 		)
 	}
-	<div class="faq__list">
+	<div class="border-t border-tertiary-600 dark:border-neutral-600">
 		{
 			items.map((item) => (
-				<details class="card faq__item" name={`faq-${blockKey}`}>
-					<summary class="faq__question">
+				<details
+					class="group border-b border-tertiary-600 dark:border-neutral-600"
+					name={`faq-${blockKey}`}
+				>
+					<summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-4.5 font-serif text-item/item max-md:text-subhead">
 						<span>{item.question}</span>
-						<span class="faq__icon" aria-hidden="true">
+						<span
+							class="grid size-7 flex-none place-items-center text-glyph text-secondary-600 group-open:rotate-45 motion-safe:transition-transform motion-safe:duration-450 motion-safe:ease-calm dark:text-secondary-400"
+							aria-hidden="true"
+						>
 							<Icon name="ph:plus" />
 						</span>
 					</summary>
-					<div class="faq__answer">
+					<div class="max-w-answer space-y-3 pb-5 text-meta/copy text-pretty text-neutral-400 dark:text-neutral-100">
 						{toParagraphs(item.answer).map((paragraph) => (
 							<p>{paragraph}</p>
 						))}
@@ -44,105 +62,3 @@ const hasIntro = Boolean(headline || subheadline);
 		}
 	</div>
 </section>
-
-<style>
-	.faq {
-		display: grid;
-		align-items: start;
-		gap: clamp(40px, 8vw, 112px);
-	}
-
-	.faq--with-intro {
-		grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
-	}
-
-	.faq__intro {
-		position: sticky;
-		inset-block-start: 104px;
-	}
-
-	.faq__subheadline {
-		max-width: 34ch;
-		color: var(--color-text-secondary);
-		text-wrap: pretty;
-	}
-
-	.section-headline + .faq__subheadline {
-		margin-block-start: 20px;
-	}
-
-	.faq__list {
-		display: grid;
-		gap: 10px;
-	}
-
-	.faq__item {
-		border-radius: var(--radius-lg);
-	}
-
-	.faq__item[open] {
-		box-shadow: var(--shadow-card-hover);
-	}
-
-	.faq__question {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-		padding-block: 18px;
-		padding-inline: 24px 18px;
-		border-radius: inherit;
-		font-size: 16.5px;
-		font-weight: 500;
-		list-style: none;
-		cursor: pointer;
-	}
-
-	.faq__question::-webkit-details-marker {
-		display: none;
-	}
-
-	.faq__icon {
-		display: grid;
-		flex: none;
-		place-items: center;
-		width: 32px;
-		height: 32px;
-		border-radius: 50%;
-		background: var(--color-sunken);
-		color: var(--color-text-secondary);
-		font-size: 15px;
-	}
-
-	.faq__item[open] .faq__icon {
-		rotate: 45deg;
-	}
-
-	.faq__answer {
-		max-width: 62ch;
-		padding-inline: 24px;
-		padding-block-end: 24px;
-		color: var(--color-text-secondary);
-		text-wrap: pretty;
-	}
-
-	.faq__answer p + p {
-		margin-block-start: 12px;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.faq__icon {
-			transition: rotate 220ms var(--ease-out);
-		}
-	}
-
-	@media (max-width: 960px) {
-		.faq--with-intro {
-			grid-template-columns: minmax(0, 1fr);
-		}
-
-		.faq__intro {
-			position: static;
-		}
-	}
-</style>

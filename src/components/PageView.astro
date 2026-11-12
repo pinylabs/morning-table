@@ -20,24 +20,24 @@ const hasHero = blocks.some((block) => block._type === "marketing_hero");
 	blocks.length > 0 ? (
 		<>
 			{!hasHero && (
-				<header class="container page-header">
-					<h1 class="display page-header__title" {...titleEdit}>
+				<header class="wrap pt-opening">
+					<h1 class="headline max-w-title" {...titleEdit}>
 						{title}
 					</h1>
 				</header>
 			)}
-			<div class="page-blocks" {...page.edit.content}>
+			<div data-blocks class="flex flex-col" {...page.edit.content}>
 				<MarketingBlocks value={blocks} />
 			</div>
 		</>
 	) : (
-		<section class="container empty-state">
-			<h1 class="display empty-state__title">{title}</h1>
+		<section class="wrap empty-state">
+			<h1 class="headline">{title}</h1>
 			{Astro.locals.user && (
 				<>
 					<p class="lead">This page has no blocks yet. Add some in the editor, then publish.</p>
-					<div class="actions">
-						<a href={`/_emdash/admin/content/pages/${page.data.id}`} class="btn btn-lg">
+					<div class="mt-3 flex flex-wrap justify-center gap-2.5">
+						<a href={`/_emdash/admin/content/pages/${page.data.id}`} class="btn btn-lg btn-primary">
 							Edit page
 						</a>
 					</div>
@@ -46,15 +46,3 @@ const hasHero = blocks.some((block) => block._type === "marketing_hero");
 		</section>
 	)
 }
-
-<style>
-	.page-header {
-		padding-block-start: clamp(56px, 7vw, 104px);
-	}
-
-	.page-header__title {
-		max-width: 20ch;
-		font-size: var(--font-size-h2);
-		line-height: var(--leading-snug);
-	}
-</style>

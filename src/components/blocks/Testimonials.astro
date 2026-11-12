@@ -26,28 +26,34 @@ const [featured, ...others] = value.testimonials.map((testimonial) => ({
 }));
 ---
 
-<section id={anchor_id || undefined} class="container section">
-	{headline && <h2 class="eyebrow testimonials__label">{headline}</h2>}
+<section id={anchor_id || undefined} class="wrap scroll-mt-22 py-section-half">
+	{headline && <h2 class="eyebrow mb-6 flex justify-center leading-copy tracking-normal">{headline}</h2>}
 	{
 		featured && (
-			<figure class="testimonials__featured">
-				<span class="testimonials__mark" aria-hidden="true">“</span>
-				<blockquote class="display testimonials__featured-quote">
+			<figure class="mx-auto max-w-featured text-center">
+				<span
+					class="block h-half-em font-serif text-mark/none text-secondary-600 dark:text-secondary-400"
+					aria-hidden="true">“</span
+				>
+				<blockquote class="display space-y-paragraph text-quote/quote tracking-quote">
 					{toParagraphs(featured.quote).map((paragraph) => (
 						<p>{paragraph}</p>
 					))}
 				</blockquote>
-				<figcaption class="testimonials__who">
+				<figcaption class="mt-8 inline-flex items-center gap-3 text-start text-meta font-medium">
 					{featured.avatar ? (
 						<Image
 							image={featured.avatar}
 							alt=""
 							width={44}
 							height={44}
-							class="testimonials__avatar"
+							class="h-11! w-11 max-w-none! flex-none rounded-full object-cover"
 						/>
 					) : (
-						<span class="avatar" aria-hidden="true">
+						<span
+							class="grid size-11 flex-none place-items-center rounded-full bg-tertiary-400 text-initials font-medium tracking-mark text-neutral-400 inset-ring inset-ring-tertiary-600 dark:bg-neutral-950 dark:text-neutral-100 dark:inset-ring-neutral-600"
+							aria-hidden="true"
+						>
 							{featured.initials}
 						</span>
 					)}
@@ -55,7 +61,9 @@ const [featured, ...others] = value.testimonials.map((testimonial) => ({
 						{featured.author}
 						{featured.attribution && " "}
 						{featured.attribution && (
-							<span class="testimonials__role">{featured.attribution}</span>
+							<span class="block text-small font-normal text-neutral-300 dark:text-neutral-200">
+								{featured.attribution}
+							</span>
 						)}
 					</span>
 				</figcaption>
@@ -64,25 +72,28 @@ const [featured, ...others] = value.testimonials.map((testimonial) => ({
 	}
 	{
 		others.length > 0 && (
-			<div class="testimonials__grid">
+			<div class="mt-quotes grid grid-cols-quotes gap-4">
 				{others.map((testimonial) => (
-					<figure class="card testimonials__card">
-						<blockquote class="testimonials__quote">
+					<figure class="card flex flex-col justify-between p-8">
+						<blockquote class="quoted space-y-paragraph text-lead/note text-pretty">
 							{toParagraphs(testimonial.quote).map((paragraph) => (
 								<p>{paragraph}</p>
 							))}
 						</blockquote>
-						<figcaption class="testimonials__who">
+						<figcaption class="mt-7 inline-flex items-center gap-3 text-start text-meta font-medium">
 							{testimonial.avatar ? (
 								<Image
 									image={testimonial.avatar}
 									alt=""
 									width={44}
 									height={44}
-									class="testimonials__avatar"
+									class="h-11! w-11 max-w-none! flex-none rounded-full object-cover"
 								/>
 							) : (
-								<span class="avatar" aria-hidden="true">
+								<span
+									class="grid size-11 flex-none place-items-center rounded-full bg-tertiary-400 text-initials font-medium tracking-mark text-neutral-400 inset-ring inset-ring-tertiary-600 dark:bg-neutral-950 dark:text-neutral-100 dark:inset-ring-neutral-600"
+									aria-hidden="true"
+								>
 									{testimonial.initials}
 								</span>
 							)}
@@ -90,7 +101,7 @@ const [featured, ...others] = value.testimonials.map((testimonial) => ({
 								{testimonial.author}
 								{testimonial.attribution && " "}
 								{testimonial.attribution && (
-									<span class="testimonials__role">
+									<span class="block text-small font-normal text-neutral-300 dark:text-neutral-200">
 										{testimonial.attribution}
 									</span>
 								)}
@@ -102,97 +113,3 @@ const [featured, ...others] = value.testimonials.map((testimonial) => ({
 		)
 	}
 </section>
-
-<style>
-	.testimonials__label {
-		display: flex;
-		justify-content: center;
-		margin-block-end: 24px;
-		line-height: var(--leading-normal);
-		letter-spacing: normal;
-	}
-
-	.testimonials__featured {
-		max-width: 960px;
-		margin-inline: auto;
-		text-align: center;
-	}
-
-	.testimonials__mark {
-		display: block;
-		height: 0.5em;
-		font-family: var(--font-display);
-		font-size: 120px;
-		line-height: 1;
-		color: var(--color-accent);
-	}
-
-	.testimonials__featured-quote {
-		font-size: clamp(30px, 3.5vw, 48px);
-		line-height: 1.16;
-		letter-spacing: -0.012em;
-	}
-
-	.testimonials__who {
-		display: inline-flex;
-		align-items: center;
-		gap: 12px;
-		margin-block-start: 32px;
-		font-size: 15px;
-		font-weight: 500;
-		text-align: start;
-	}
-
-	.testimonials__who :global(.testimonials__avatar) {
-		flex: none;
-		width: 44px;
-		max-width: none;
-		height: 44px;
-		border-radius: 50%;
-		object-fit: cover;
-	}
-
-	.testimonials__role {
-		display: block;
-		font-size: 14px;
-		font-weight: 400;
-		color: var(--color-muted);
-	}
-
-	.testimonials__grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-		gap: 16px;
-		margin-block-start: clamp(56px, 7vw, 96px);
-	}
-
-	.testimonials__card {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		padding: 32px;
-	}
-
-	.testimonials__card .testimonials__who {
-		margin-block-start: 28px;
-	}
-
-	.testimonials__quote {
-		font-size: 17px;
-		line-height: 1.6;
-		text-wrap: pretty;
-		quotes: "\201C" "\201D";
-	}
-
-	.testimonials__quote p:first-child::before {
-		content: open-quote;
-	}
-
-	.testimonials__quote p:last-child::after {
-		content: close-quote;
-	}
-
-	:is(.testimonials__featured-quote, .testimonials__quote) p + p {
-		margin-block-start: 0.6em;
-	}
-</style>

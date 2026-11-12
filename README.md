@@ -11,16 +11,21 @@ A calm, photo-led EmDash site for a neighbourhood café: one picture, a short me
 
 It needs Node 22 or later and pnpm. On Cloudflare it uses a D1 database (`DB`) and an R2 bucket (`MEDIA`), as EmDash's Cloudflare templates do.
 
-## Photos and video
+## Photos
 
-They are linked from their sources and never copied into this repository:
+They are linked from their sources and never copied into this repository. Every page credits them in its footer.
 
-- Home: the hero, first of three: [Keghan Crossland](https://unsplash.com/@keghancphoto) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/modern-coffee-shop-interior-with-curved-counter-ZZxmc66SjfM), not copied.
-- Home: the hero, second: [Aleksandra Dementeva](https://unsplash.com/@alexphotogram) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/long-wooden-table-with-chairs-in-a-modern-room-K8fPaxVDJyU), not copied.
-- Home: the hero, third; the menu: [Joe Hepburn](https://unsplash.com/@thatjoebloke) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/cup-of-cappuccino-EcWFOYOpkpY), not copied.
-- Home: the bakery band: [Conor Brown](https://unsplash.com/@commonboxturtle) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/a-bunch-of-croissants-that-are-on-a-table-sqkXyyj4WdE), not copied.
-- The menu page: [phoebe lynch](https://unsplash.com/@siorraidh) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/barista-pouring-latte-art-into-a-striped-mug-vkojeYbY39U), not copied.
+- The home's hero, first of three; the About page: [Keghan Crossland](https://unsplash.com/@keghancphoto) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/modern-coffee-shop-interior-with-curved-counter-ZZxmc66SjfM), not copied.
+- The home's hero, second; the About and Visit pages: [Aleksandra Dementeva](https://unsplash.com/@alexphotogram) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/long-wooden-table-with-chairs-in-a-modern-room-K8fPaxVDJyU), not copied.
+- The home's hero, third; the Menu page: [Joe Hepburn](https://unsplash.com/@thatjoebloke) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/cup-of-cappuccino-EcWFOYOpkpY), not copied.
+- The home's bakery band; the Bakery page: [Conor Brown](https://unsplash.com/@commonboxturtle) on Unsplash, [Unsplash License](https://unsplash.com/license), linked from [its page](https://unsplash.com/photos/a-bunch-of-croissants-that-are-on-a-table-sqkXyyj4WdE), not copied.
+
+The footer's credits for the other pages come from `src/utils/credits.ts`; keep it in step with the seed's photos.
+
+## Styling
+
+Tailwind CSS 4. The design tokens (colours, fonts, type scale, spacing, widths, radii) are in `src/styles/theme.css`, the one file to edit to retheme the site; `src/styles/global.css` holds the dark variant, the base styles and the few components. Motion is calm and stops under `prefers-reduced-motion`.
 
 ## Licence
 
-MIT. Built on EmDash's `marketing-cloudflare` template, MIT, Copyright 2026 Cloudflare Inc.; its notice is kept in [LICENSE](LICENSE). Made by the Pinies in [Piny](https://piny.studio/home/).
+MIT. The Piny Studio mark in `public/brand/` is Piny's and isn't covered by the MIT licence. Built on EmDash's `marketing-cloudflare` template, MIT, Copyright 2026 Cloudflare Inc.; its notice is kept in [LICENSE](LICENSE). Made by the Pinies in [Piny](https://piny.studio/home/).

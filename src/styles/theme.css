@@ -1,35 +1,259 @@
 /*
-  theme.css -- your theme overrides. This is the file to edit to
-  retheme the site.
+  theme.css -- Morning Table's design tokens, the one file to edit to
+  retheme the site. src/styles/global.css imports it right after
+  Tailwind, and every utility the pages use (bg-primary-700,
+  text-headline, max-w-page, rounded-card ...) reads these variables.
 
-  Every design token lives in src/styles/tokens.css (colors, glows,
-  type scale, spacing, layout, radii, shadows) with its default value.
-  Override any of them here: declarations in this file are unlayered,
-  so they always beat the @layer base defaults in tokens.css.
+  The look: cream stone and forest ink, brass for the small marks and the
+  prices, Cormorant Garamond headlines over Karla text, square corners,
+  hairlines instead of shadows.
 
-  Colors are defined with light-dark(). Overriding with a plain color
-  changes light and dark mode at once; use light-dark(<light>, <dark>)
-  to set different values per mode.
+  Colours are four scales, each built around the café's own colours, plus
+  white, black and the "open now" green. Light and dark mode pick
+  different steps of the same scales with the `dark:` variant (see
+  global.css):
 
-  Ink is the brand: --color-brand follows --color-text. To give the
-  buttons a color, set --color-brand and --color-on-brand together.
-  --color-accent colors the featured testimonial's quote mark. Set
-  --glow-daylight or --glow-dusk to none for flat panels.
+    page         bg-tertiary-200     dark:bg-neutral-900
+    surface      bg-tertiary-50      dark:bg-neutral-800
+    sunken       bg-tertiary-400     dark:bg-neutral-950
+    ink          text-neutral-700    dark:text-tertiary-500
+    soft text    text-neutral-400    dark:text-neutral-100
+    muted text   text-neutral-300    dark:text-neutral-200
+    hairline     tertiary-600        dark: neutral-600
+    strong line  tertiary-700        dark: neutral-500
+    brand        primary-700         dark: secondary-400  (buttons)
+    brand hover  primary-600         dark: secondary-300
+    brass        secondary-600       dark: secondary-400  (small marks, prices)
+    forest band  bg-primary-700      dark:bg-primary-950, words in tertiary-300
+    on photos    tertiary-100
 
-  Webfonts are loaded in astro.config.mjs (--font-body for text,
-  --font-display for headlines). Swap the loaded fonts there; use
-  overrides here for system fonts or a separate face for card titles.
-
-  Example:
-
-  :root {
-    --color-brand: light-dark(#14532d, #bbf7d0);
-    --color-on-brand: light-dark(#f0fdf4, #052e16);
-    --color-accent: light-dark(#15803d, #4ade80);
-    --glow-daylight: none;
-    --radius-sheet: 16px;
-  }
+  The webfonts come from the Google Fonts link in src/layouts/Base.astro
+  and src/pages/index.astro; to swap a face, change that link and
+  --font-sans or --font-serif here.
 */
 
-:root {
+@theme static {
+	/* Only the template's own colours: Tailwind's default palette is off. */
+	--color-*: initial;
+	--color-white: #ffffff;
+	--color-black: #000000;
+	--color-success: #8fd19e; /* the home's "Open now" dot */
+
+	/* Primary: forest green, the brand and its bands */
+	--color-primary: #1f3a2e;
+	--color-primary-50: #eef3f0;
+	--color-primary-100: #d5e1da;
+	--color-primary-200: #abc3b5;
+	--color-primary-300: #7fa28f;
+	--color-primary-400: #56806b;
+	--color-primary-500: #3a6350;
+	--color-primary-600: #2a4a3b; /* button hover */
+	--color-primary-700: #1f3a2e; /* brand, the forest band */
+	--color-primary-800: #172d23;
+	--color-primary-900: #112119;
+	--color-primary-950: #0c1511; /* the forest band at night, the photo shade */
+
+	/* Secondary: brass, for small capitals, prices and marks */
+	--color-secondary: #a8834a;
+	--color-secondary-50: #fbf6ec;
+	--color-secondary-100: #f4e8cf;
+	--color-secondary-200: #e9d4aa;
+	--color-secondary-300: #d6b57c; /* button hover at night */
+	--color-secondary-400: #c9a466; /* brass and buttons at night */
+	--color-secondary-500: #b89356;
+	--color-secondary-600: #a8834a; /* brass */
+	--color-secondary-700: #89693a;
+	--color-secondary-800: #6b512d;
+	--color-secondary-900: #4e3b21;
+	--color-secondary-950: #322515;
+
+	/* Tertiary: cream stone, the paper of the light pages and the words on photos */
+	--color-tertiary: #f5f1e8;
+	--color-tertiary-50: #faf7f0; /* surface */
+	--color-tertiary-100: #f8f3e8; /* words on photos */
+	--color-tertiary-200: #f5f1e8; /* page */
+	--color-tertiary-300: #efe8d8; /* words on the forest band */
+	--color-tertiary-400: #ede7da; /* sunken */
+	--color-tertiary-500: #ece6d8; /* ink at night */
+	--color-tertiary-600: #ddd5c4; /* hairline */
+	--color-tertiary-700: #c8bda6; /* strong line */
+	--color-tertiary-800: #a89b7f;
+	--color-tertiary-900: #857a62;
+	--color-tertiary-950: #5f5645;
+
+	/* Neutral: the green-grey ink and the night pages */
+	--color-neutral: #1d2b24;
+	--color-neutral-50: #d3d8d4;
+	--color-neutral-100: #a3aca5; /* soft text at night */
+	--color-neutral-200: #8a948d; /* muted text at night */
+	--color-neutral-300: #78837b; /* muted text */
+	--color-neutral-400: #5f6b63; /* soft text */
+	--color-neutral-500: #3a4a41; /* strong line at night */
+	--color-neutral-600: #26332c; /* hairline at night */
+	--color-neutral-700: #1d2b24; /* ink */
+	--color-neutral-800: #17211c; /* surface at night */
+	--color-neutral-900: #121a16; /* page at night, the photo shade */
+	--color-neutral-950: #0f1612; /* sunken at night */
+
+	/* Fonts */
+	--font-sans: "Karla", system-ui, sans-serif;
+	--font-serif: "Cormorant Garamond", Georgia, serif;
+
+	/* Type scale: the template's own sizes; Tailwind's default scale is off */
+	--text-*: initial;
+	--text-micro: 11.5px; /* photo captions on a phone */
+	--text-caption: 12px; /* footer, photo captions */
+	--text-tag: 12.5px; /* small buttons, badges */
+	--text-label: 13px; /* small capitals, buttons */
+	--text-initials: 13.5px;
+	--text-small: 14px; /* navigation, notes */
+	--text-detail: 14.5px;
+	--text-meta: 15px; /* prices, answers */
+	--text-body: 16px;
+	--text-lead: 17px;
+	--text-glyph: 18px; /* the question's plus */
+	--text-subhead: 22px;
+	--text-prose-sm: 23px; /* h3 in long text */
+	--text-item: 25px; /* a dish, a question */
+	--text-wordmark: 26px; /* the café's name */
+	--text-logo-sm: 27px;
+	--text-logo: 28px;
+	--text-prose: 30px; /* h2 in long text */
+	--text-heading-xs: 32px; /* the home's hero headline on a phone */
+	--text-heading-sm: 40px;
+	--text-heading: 46px;
+	--text-heading-lg: 54px;
+	--text-mark: 120px; /* the quote mark */
+	--text-h4: 1.25rem;
+	--text-h3: 1.5rem;
+	--text-h2: 2rem;
+	--text-h1: 3.5rem;
+	--text-hero: clamp(32px, 4vw, 46px); /* a hero headline on a photo */
+	--text-headline: clamp(40px, 4.4vw, 54px); /* section headlines */
+	--text-band: clamp(36px, 3.6vw, 46px); /* a headline beside a photo */
+	--text-band-wide: clamp(36px, 4vw, 46px); /* a closing call to action */
+	--text-quote: clamp(30px, 3.5vw, 48px);
+	--text-stats-headline: clamp(34px, 3.6vw, 52px);
+	--text-price: clamp(48px, 4.6vw, 64px);
+	--text-stat: clamp(56px, 6.2vw, 92px);
+	--text-stat-sm: clamp(40px, 14vw, 72px);
+	--text-giant: clamp(120px, 22vw, 240px); /* the 404 */
+
+	/* Line heights */
+	--leading-*: initial;
+	--leading-natural: normal; /* the font's own, as on the home */
+	--leading-flush: 0.85;
+	--leading-stat: 0.95;
+	--leading-none: 1;
+	--leading-snug: 1.05; /* the home's "This morning" */
+	--leading-headline: 1.06;
+	--leading-heading: 1.1;
+	--leading-title: 1.15;
+	--leading-quote: 1.16;
+	--leading-control: 1.2;
+	--leading-item: 1.25;
+	--leading-chip: 1.3;
+	--leading-label: 1.4;
+	--leading-plan: 1.55;
+	--leading-note: 1.6;
+	--leading-copy: 1.7; /* body copy */
+	--leading-loose: 1.8;
+
+	/* Letter spacing */
+	--tracking-label: 0.1em; /* small capitals */
+	--tracking-nav: 0.08em;
+	--tracking-mark: 0.02em; /* the wordmark */
+	--tracking-title: 0.01em; /* headings */
+	--tracking-quote: -0.012em;
+	--tracking-logo-wide: 0.32em;
+	--tracking-logo-spaced: 0.24em;
+	--tracking-logo-tight: -0.045em;
+	--tracking-logo-snug: -0.03em;
+
+	/* Spacing beyond Tailwind's 4px steps */
+	--spacing-gutter: 40px; /* the page edge; --spacing-gutter-narrow on a phone */
+	--spacing-gutter-narrow: 18px;
+	--spacing-section: clamp(64px, 8vw, 110px); /* between two blocks */
+	--spacing-section-half: calc(var(--spacing-section) / 2);
+	--spacing-opening: clamp(56px, 7vw, 104px); /* above a page's first words */
+	--spacing-header: clamp(40px, 5vw, 64px); /* under a section header */
+	--spacing-columns: clamp(28px, 7vw, 80px);
+	--spacing-band: clamp(64px, 8vw, 96px);
+	--spacing-stats-gap: clamp(48px, 6vw, 88px); /* under the stats headline */
+	--spacing-quotes: clamp(56px, 7vw, 96px);
+	--spacing-chip: clamp(12px, 1.6vw, 24px); /* a caption's distance from the photo edge */
+	--spacing-marquee: clamp(48px, 6vw, 96px);
+	--spacing-half-em: 0.5em;
+	--spacing-paragraph: 0.6em;
+
+	/* Heights */
+	--min-height-hero: max(560px, 78vh);
+	--min-height-cta: clamp(480px, 42vw, 620px);
+	--max-height-panel: calc(100dvh - 96px); /* the phone menu */
+
+	/* Widths */
+	--container-page: 1040px; /* the content column */
+	--container-intro: 780px; /* a section header */
+	--container-empty: 640px;
+	--container-featured: 960px;
+	--container-single: 440px;
+	--container-lede: 360px;
+	--container-prose: 68ch;
+	--container-answer: 56ch;
+	--container-lead: 52ch;
+	--container-copy: 46ch;
+	--container-tagline: 36ch;
+	--container-stats: 26ch;
+	--container-label: 24ch;
+	--container-headline: 22ch;
+	--container-title: 20ch;
+
+	/* Grids */
+	--grid-template-columns-menu: minmax(0, 1fr) minmax(0, 1.2fr); /* words and a list */
+	--grid-template-columns-split: minmax(0, 1fr) minmax(0, 1.4fr); /* words and a photo */
+	--grid-template-columns-split-flip: minmax(0, 1.4fr) minmax(0, 1fr);
+	--grid-template-columns-home-footer: minmax(0, 1.6fr) minmax(0, 1fr);
+	--grid-template-columns-footer: minmax(0, 1.6fr);
+	--grid-template-columns-row: minmax(0, 1fr) auto; /* words and their price or button */
+	--grid-template-columns-single: minmax(0, 440px);
+	--grid-template-columns-contact: repeat(
+		auto-fit,
+		minmax(min(100%, max(260px, (100% - 2 * 40px) / 3)), 1fr)
+	); /* three columns with gap-x-10 between them, fewer when narrow */
+	--grid-template-columns-stats: repeat(
+		auto-fit,
+		minmax(min(100%, max(200px, (100% - 3 * 32px) / 4)), 1fr)
+	); /* four columns with gap-x-8 between them */
+	--grid-template-columns-plans: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+	--grid-template-columns-quotes: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+
+	/* Breakpoints: below md (768px) is a phone; max-tablet is 960px and below */
+	--breakpoint-tablet: 60.0625rem;
+
+	/* Corners: square, as on the home. Set a radius to round them. */
+	--radius-pill: 0; /* buttons, chips, badges */
+	--radius-card: 0;
+	--radius-media: 0; /* photos */
+	--radius-sheet: 0; /* the full-width bands */
+	--radius-plan: 24px;
+
+	/* Hairlines instead of shadows */
+	--shadow-rule: 0 1px 0 var(--color-tertiary-600); /* under the header */
+	--text-shadow-photo: 0 1px 14px rgb(10 16 13 / 0.55); /* words on a photo */
+	--blur-glass: 12px;
+	--blur-chip: 10px;
+
+	/* Motion: the home's calm easing */
+	--ease-calm: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--default-transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--default-transition-duration: 150ms;
+}
+
+/* The page edge narrows on a phone. */
+@layer theme {
+	@media (width < 48rem) {
+		:root {
+			--spacing-gutter: var(--spacing-gutter-narrow);
+		}
+	}
 }

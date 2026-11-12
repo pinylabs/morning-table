@@ -1,0 +1,22 @@
+---
+// The Piny Studio lockup for a footer's "Made by the Pinies in …" line: the mark and the name,
+// set in the line's own colour and type, the mark centred on the words.
+interface Props {
+	/** The mark's size, a theme size class such as size-4 or size-5, to suit the line's type. */
+	markSize?: "size-4" | "size-5";
+}
+
+const { markSize = "size-5" } = Astro.props;
+---
+
+<a
+	href="https://piny.studio/home/"
+	class="underline decoration-tertiary-600 underline-offset-3 transition-colors hover:decoration-current dark:decoration-neutral-600 dark:hover:decoration-current"
+	><img
+		src="/brand/piny-studio-mark.png"
+		alt=""
+		width="64"
+		height="64"
+		class:list={["me-1 inline-block align-middle", markSize]}
+	/>Piny Studio</a
+>
